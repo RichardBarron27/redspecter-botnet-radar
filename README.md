@@ -2,7 +2,7 @@
   <img src="https://raw.githubusercontent.com/RichardBarron27/red-specter-offensive-framework/main/assets/red-specter-logo.png" alt="Red Specter Logo" width="200">
 </p>
 
-# 🛡️ Red Specter – Botnet Radar
+# 🛡️ Red Specter – Botnet Radar (Community Sensor)
 
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![Platform](https://img.shields.io/badge/Platform-Linux-lightgrey)
@@ -11,17 +11,12 @@
 ![Version](https://img.shields.io/github/v/release/RichardBarron27/redspecter-botnet-radar?label=Release)
 
 > Part of the **Red Specter Purple Team AI Defense Suite**  
-> Offense-driven defense against AI-enabled threats.
-# Red Specter – Botnet Radar (Community Sensor)
+> **Tagline:** See the storm before it hits.
 
-> **Tagline:** See the storm before it hits.  
-> Lightweight network pattern watcher for PPS spikes and distributed UDP activity on Linux.
+Lightweight network pattern watcher for **packet-rate spikes** and **distributed UDP activity** on Linux.
 
-Botnet Radar (Community Sensor) is a small, focused, **defensive-only** tool designed to help defenders spot
-suspicious high-volume or distributed UDP patterns on a host.  
-
-It does **not** inspect packet payloads. Instead, it watches **packet rates** and **UDP fan-out behaviour** to flag
-unusual bursts that might indicate DDoS or botnet-style activity.
+Botnet Radar (Community Sensor) is a focused, **defensive-only** tool designed to help defenders spot unusual bursts
+of network behavior that may indicate **botnet or DDoS coordination**.
 
 ---
 
@@ -29,22 +24,23 @@ unusual bursts that might indicate DDoS or botnet-style activity.
 
 - Monitors a Linux network interface using `/proc/net/dev`
 - Calculates **packets per second (PPS)** over a configurable sampling window
-- Uses `ss` to estimate **UDP fan-out**:
+- Uses `ss` to estimate **UDP fan-out**
   - Number of UDP sockets
   - Unique remote IPs
   - Unique remote destination ports
-- Emits structured **JSON lines** (JSONL) for easy ingest into SIEM / log pipelines
-- Threshold-based alerts with simple `WARN` events and `alert_reasons`
-- Minimal dependencies, no packet capture, no raw PCAP handling
+- **JSONL log output** for SIEM ingestion
+- Clear alerting with `WARN` severity and actionable `alert_reasons`
+- Very lightweight — no packet sniffing or pcap libraries required
 
 ---
 
 ## ⚙️ Requirements
 
-- Linux system with `/proc/net/dev` (e.g. Kali, Debian, Ubuntu)
+- Linux system with `/proc/net/dev`  
+  (e.g. Kali, Debian, Ubuntu)
 - Python **3.8+**
-- `ss` command (usually from `iproute2` package)
-- Optional but recommended: `jq` for nicer JSON viewing
+- `ss` command from `iproute2`
+- Optional: `jq` for nicer JSON viewing
 
 ---
 
@@ -57,8 +53,10 @@ git clone https://github.com/RichardBarron27/redspecter-botnet-radar.git
 cd redspecter-botnet-radar
 
 chmod +x botnet_radar.py
+List your interfaces:
 
-# Find your interfaces
+bash
+Copy code
 ip -br a
 Take a single test sample:
 
@@ -82,38 +80,28 @@ Copy code
   --udp-ip-threshold 80 \
   --udp-port-threshold 300 \
   -l botnet_radar.log
-Key arguments:
-
--i / --interface – interface name from /proc/net/dev (e.g. eth0, wlan0)
-
--t / --interval – sampling interval in seconds
-
---pps-threshold – alert if combined RX+TX packets per second exceed this value (0 = disable)
-
---udp-ip-threshold – alert if unique remote UDP IPs exceed this value (0 = disable)
-
---udp-port-threshold – alert if unique remote UDP destination ports exceed this value (0 = disable)
-
--l / --log-file – append JSON events to this file (JSONL)
-
---once – take one sample and exit (debug/testing)
+Key Arguments
+Flag	Purpose
+-i / --interface	Interface from /proc/net/dev (e.g. eth0, wlan0)
+-t / --interval	Sampling interval in seconds
+--pps-threshold	Trigger alert if PPS exceeds value
+--udp-ip-threshold	Trigger alert if too many remote IPs
+--udp-port-threshold	Trigger alert if too many remote ports
+-l / --log-file	Append events to JSONL log
+--once	Take one sample then exit
 
 🔍 Alerting Logic
-Each sample produces a JSON record including:
+Each sample includes:
 
-packets_per_second – combined RX+TX PPS for the interval
+packets_per_second
 
-udp_sockets – number of UDP sockets reported by ss
+udp_sockets
 
-unique_remote_ips – number of distinct remote UDP IPs
+unique_remote_ips
 
-unique_remote_ports – number of distinct remote UDP destination ports
+unique_remote_ports
 
-If any thresholds are exceeded, the event:
-
-Has level: "WARN"
-
-Includes an alert_reasons array, e.g.:
+If any exceed thresholds:
 
 json
 Copy code
@@ -121,82 +109,74 @@ Copy code
   "PPS_THRESHOLD_EXCEEDED",
   "UDP_UNIQUE_IP_THRESHOLD_EXCEEDED"
 ]
-This makes it easy to filter by severity or specific conditions in your log pipeline.
+Security teams can use this for alert routing or automated enrichment.
 
 🧠 Design Philosophy
-Botnet Radar (Community Sensor) is intentionally:
+Botnet Radar (Community Sensor) is built to be:
 
-Simple – no heavy dependencies, no packet parsing framework
+Simple — no complex dependencies
 
-Host-centric – uses data already present on the system (/proc/net/dev, ss)
+Host-centric — uses system-native stats
 
-SIEM-friendly – JSONL output by default
+SIEM-friendly — JSONL by default
 
-Defensive-only – no scanning, no attack traffic generation
+Defensive-only — no attack functionality
 
-Future Pro / Commercial modules will focus on:
+Future Pro / Commercial modules will expand into:
 
 Multi-host aggregation and correlation
 
-Time-series analytics and anomaly scoring
+Anomaly scoring and time-series baselines
 
-Visual dashboards and DDoS trajectory insights
+D3/Grafana dashboards and risk scoring
 
-Integration with existing defensive stacks
+SOC workflow automation hooks
 
 🔐 Licensing
 This project uses a dual-license model:
 
-Community / Basic Features are licensed under the MIT License.
-This applies to the publicly available core tooling in this repository.
+MIT License for the public community sensor
 
-Advanced / Commercial Features are licensed under the
-Red Specter Commercial Use License (RS-CUL v1.0).
-These features are proprietary and require a commercial license to use,
-modify, integrate, or redistribute.
-
-For commercial licensing inquiries, please contact:
-
-The official Red Specter GitHub profile, or
-
-The official Red Specter LinkedIn presence
+Red Specter Commercial Use License (RS-CUL v1.0) for advanced modules
 
 text
 Copy code
 Copyright © 2025 Red Specter Limited
+For commercial inquiries, contact:
+
+Red Specter GitHub (issues or discussions)
+
+Official Red Specter LinkedIn presence
+
 ⚠️ Scope & Ethics
-Botnet Radar is intended solely for defensive use:
+This tool is intended only for defenders:
 
-Monitoring your own systems, or
+Monitor your own systems, or
 
-Systems where you have explicit written authorization
+Those with explicit written authorization
 
-Do not use this tool for unauthorized monitoring, interception, or activity that violates laws or contracts.
-Red Specter assumes no responsibility for misuse.
+Unauthorized surveillance or misuse may violate laws.
+Red Specter assumes no liability for improper use.
 
 🛣️ Roadmap (High-Level)
-Planned directions:
-
 Config file support (YAML/JSON)
 
-Multi-interface monitoring in one process
+Multi-interface monitoring
 
-Export to Prometheus / Influx formats
+Prometheus / Influx exporters
 
-Optional syslog output
+Syslog output support
 
-Example dashboards (e.g. Grafana)
+Example dashboards (Grafana)
 
-Suggestions and defensive-focused feature requests are welcome via issues and discussions.
+Defensive-focused feature requests welcome via Issues.
 
-## ❤️ Support Red Specter
+❤️ Support Red Specter
+If these tools help you:
 
-If these tools help you, you can support future development:
+☕ Buy me a coffee: https://www.buymeacoffee.com/redspecter
 
-- ☕ Buy me a coffee: https://www.buymeacoffee.com/redspecter  
-- 💼 PayPal: https://paypal.me/richardbarron1747  
+💼 PayPal: https://paypal.me/richardbarron1747
 
-Your support helps me keep improving Red Specter and building new tools. Thank you!
-
-Notice for Users: If you cloned this and found it useful, please consider starring the repo! Stars help with visibility and let me know which projects to maintain.
-
+⭐ If you found this useful — star the repo
+Visibility helps guide future development!
