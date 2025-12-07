@@ -8,7 +8,8 @@
 ![Platform](https://img.shields.io/badge/Platform-Linux-lightgrey)
 ![Language](https://img.shields.io/badge/Python-3.8+-blue)
 ![Status](https://img.shields.io/badge/Status-MVP_v0.1-orange)
-![Version](https://img.shields.io/github/v/release/RichardBarron27/redspecter-botnet-radar?label=Release)
+![Release](https://img.shields.io/github/v/release/RichardBarron27/redspecter-botnet-radar?color=blue&display_name=tag&sort=semver)
+
 
 > Part of the **Red Specter Purple Team AI Defense Suite**  
 > **Tagline:** See the storm before it hits.
