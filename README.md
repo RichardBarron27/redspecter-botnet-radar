@@ -2,13 +2,13 @@
   <img src="https://raw.githubusercontent.com/RichardBarron27/red-specter-offensive-framework/main/assets/red-specter-logo.png" alt="Red Specter Logo" width="200">
 </p>
 
-# 🛡️ Red Specter – AI Firewall Proxy
+# 🛡️ Red Specter – Botnet Radar
 
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![Platform](https://img.shields.io/badge/Platform-Linux-lightgrey)
-![Language](https://img.shields.io/badge/Python-3.10+-blue)
+![Language](https://img.shields.io/badge/Python-3.8+-blue)
 ![Status](https://img.shields.io/badge/Status-MVP_v0.1-orange)
-![Version](https://img.shields.io/github/v/release/RichardBarron27/redspecter-ai-firewall-proxy?label=Release)
+![Version](https://img.shields.io/github/v/release/RichardBarron27/redspecter-botnet-radar?label=Release)
 
 > Part of the **Red Specter Purple Team AI Defense Suite**  
 > Offense-driven defense against AI-enabled threats.
